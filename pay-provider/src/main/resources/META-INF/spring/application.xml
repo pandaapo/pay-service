@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd        http://dubbo.apache.org/schema/dubbo        http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="pay-service" />
+
+    <!-- 配置注册中心 -->
+    <!--<dubbo:registry address="N/A" />-->
+    <dubbo:registry id="rg1" address="zookeeper://192.168.205.129:2181" />
+    <!--<dubbo:registry id="rg2" address="zookeeper://192.168.204.127:2181"/>-->
+
+    <!-- 发布服务才需要这项配置，像客户端调用服务不需要这项配置 -->
+    <dubbo:protocol name="dubbo" port="20880" />
+
+    <dubbo:protocol name="webservice" port="8080" server="jetty" />
+
+    <dubbo:protocol name="rest" port="8888" server="jetty" />
+
+    <dubbo:service interface="com.panda.dubbo.IPayService" ref="payService" protocol="rest" registry="rg1"/>
+
+    <!--protocol=""指定IQueryService服务暴露的协议类型-->
+    <dubbo:service interface="com.panda.dubbo.IQueryService" ref="queryService" protocol="dubbo,webservice" registry="rg1"/>
+
+    <bean id="payService" class="com.panda.dubbo.PayServiceImpl" />
+
+    <bean id="queryService" class="com.panda.dubbo.QueryServiceImpl" />
+</beans>
